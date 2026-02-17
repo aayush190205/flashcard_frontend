@@ -1,0 +1,137 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+* { box-sizing: border-box; }
+
+/* --- THEME 1: AUTH (THE MATRIX STYLE YOU LIKED) --- */
+.theme-terminal {
+  background-color: #050505;
+  color: #22c55e; /* Green-500 */
+  font-family: 'Courier New', Courier, monospace;
+}
+
+.crt-overlay {
+  background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+              linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+  background-size: 100% 4px, 6px 100%;
+  pointer-events: none;
+  position: absolute; inset: 0; z-index: 50; opacity: 0.15;
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100%); }
+}
+
+/* --- THEME 2: DASHBOARD (CLEAN & READABLE) --- */
+.theme-app {
+  background-color: #0f172a; /* Slate 900 */
+  color: #f8fafc;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Dashboard Utilities */
+.card-glass {
+  @apply bg-slate-900/60 border border-slate-700/50 backdrop-blur-xl rounded-xl transition-all duration-300;
+}
+.card-glass:hover {
+  @apply border-indigo-500/50 shadow-lg shadow-indigo-500/10 -translate-y-1;
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-indigo-400 font-bold;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #020617; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s ease-in-out infinite;
+}
+
+.animate-pulse-slow {
+  animation: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.animate-in {
+  animation-duration: 0.5s;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  animation-fill-mode: both;
+}
+
+@keyframes slide-in-from-bottom-8 {
+  from {
+    transform: translateY(2rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.slide-in-from-bottom-8 {
+  animation-name: slide-in-from-bottom-8;
+}
+
+.slide-in-from-bottom-4 {
+  animation-name: slide-in-from-bottom-4;
+}
+
+@keyframes slide-in-from-bottom-4 {
+  from {
+    transform: translateY(1rem);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .transform-style-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden; /* Safari fix */
+  }
+  .rotate-y-180 {
+    transform: rotateY(180deg);
+  }
+}
