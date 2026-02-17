@@ -19,7 +19,7 @@ const Chatbot = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [documents, setDocuments] = useState([]);
   const [selectedDocId, setSelectedDocId] = useState("");
-  const baseUrl = import.meta.env.VITE_API_URL;
+  const baseUrl = "https://ai-flashcard-backend-j20a.onrender.com";
 
   // 1. Fetch Docs
   useEffect(() => {
@@ -50,7 +50,7 @@ const Chatbot = () => {
     setIsLoading(true);
 
     try {
-      const res = await fetch("http://localhost:5000/api/chat/ask", {
+      const res = await fetch(`${baseUrl}/api/chat/ask`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: userMsg.content, documentId: selectedDocId, history: messages }),
