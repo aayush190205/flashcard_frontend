@@ -4,7 +4,7 @@ import { useTheme } from "../context/ThemeContext";
 import ReactMarkdown from 'react-markdown';
 import { 
   Send, Bot, Loader2, Paperclip, 
-  ChevronDown, User, FileText 
+  ChevronDown, User, FileText, LifeBuoy 
 } from "lucide-react";
 
 const Chatbot = () => {
@@ -20,6 +20,7 @@ const Chatbot = () => {
   const [documents, setDocuments] = useState([]);
   const [selectedDocId, setSelectedDocId] = useState("");
   const baseUrl = "https://ai-flashcard-backend-j20a.onrender.com";
+  
 
   // 1. Fetch Docs
   useEffect(() => {
@@ -39,7 +40,7 @@ const Chatbot = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // 3. Send Message
+  // 3. Send Message (Standard)
   const handleSend = async (e) => {
     e.preventDefault();
     if (!input.trim() || !selectedDocId) return;
@@ -66,9 +67,39 @@ const Chatbot = () => {
     }
   };
 
+  // 4. Trigger Socratic Hint (Hidden State Machine Trigger)
+  const handleSOS = async () => {
+    if (!selectedDocId || isLoading) return;
+    
+    // Display a friendly message to the user locally
+    const userMsg = { role: "user", content: "I'm stuck. Can you give me a hint without giving away the answer?" };
+    setMessages(prev => [...prev, userMsg]);
+    setIsLoading(true);
+
+    try {
+      const res = await fetch(`${baseUrl}/api/chat/ask`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // Send the hidden system trigger to the backend
+        body: JSON.stringify({ 
+            message: "[STUDENT_STUCK] The student is stuck. Enter Remediation State. Give a Socratic hint or ask a simpler foundational question. DO NOT give the direct answer.", 
+            documentId: selectedDocId, 
+            history: messages 
+        }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setMessages(prev => [...prev, { role: "assistant", content: data.reply }]);
+      }
+    } catch (err) {
+      setMessages(prev => [...prev, { role: "assistant", content: "Connection Error." }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    // FIX 1: Removed 'fixed inset-0'. Now uses 'h-full' to fit inside the MainLayout area.
-    // FIX 2: Added 'relative' so it doesn't overlap the sidebar.
     <div className={`flex flex-col h-[calc(100vh-3rem)] w-full overflow-hidden ${isDark ? 'bg-[#0B0C15]' : 'bg-white'}`}>
 
       {/* HEADER */}
@@ -156,12 +187,24 @@ const Chatbot = () => {
                     <Paperclip size={18} />
                 </button>
 
+                {/* THE NEW SOCRATIC HINT BUTTON */}
+                <button 
+                    type="button" 
+                    onClick={handleSOS}
+                    disabled={documents.length === 0 || isLoading}
+                    title="Get a Socratic Hint"
+                    className={`p-2.5 rounded-lg transition-all font-bold text-xs flex items-center gap-2 ${isDark ? 'text-amber-500 hover:bg-amber-500/10' : 'text-amber-600 hover:bg-amber-50 shadow-sm'}`}
+                >
+                    <LifeBuoy size={18} />
+                    <span className="hidden sm:inline">Hint</span>
+                </button>
+
                 <input 
                     type="text" 
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder={documents.length > 0 ? "Ask a question..." : "Upload a PDF first"}
-                    disabled={documents.length === 0}
+                    disabled={documents.length === 0 || isLoading}
                     className={`flex-1 bg-transparent px-2 py-2 outline-none text-sm font-medium ${isDark ? 'text-white placeholder:text-gray-500' : 'text-slate-900 placeholder:text-slate-400'}`}
                 />
                 
