@@ -13,7 +13,7 @@ const Flashcards = () => {
   const [documents, setDocuments] = useState([]);
   const [selectedDocId, setSelectedDocId] = useState("");
   
-  const baseUrl = "https://ai-flashcard-backend-j20a.onrender.com";
+  const API_BASE = "https://ai-flashcard-backend-j20a.onrender.com";
 
   const [flashcards, setFlashcards] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
